@@ -1,0 +1,50 @@
+<html>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+    <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
+
+<body>
+<div id="main"></div>
+</body>
+<script src="latlonginput.js"></script>
+<script>
+console.log(latlonginput)
+var html = "";
+html += "<h3>First Position (With label and small underneath)</h3>"
+html += `<div class="row w-50 m-3">`
+    html += `<div id='latitudeDiv' class='col-6'>`
+    html += "</div>"
+    html += `<div id='longitudeDiv' class='col-6'>`
+    html += "</div>"
+html += "</div>"    
+html += "<h3>Second Position (without label or small)</h3>"
+html += `<div class="row w-50 m-3">`    
+    html += `<div id='latitudeDiv2' class='col-6'>`
+    html += "</div>"
+    html += `<div id='longitudeDiv2' class='col-6'>`
+    html += "</div>"
+html += "</div>"
+html += "<button class='btn btn-primary ml-4' onclick=alert_to_values()>See Values</button>"
+
+document.getElementById("main").innerHTML = html;
+
+$("#latitudeDiv").html(latlonginput.generateLatitudeInputWithLabel(0,"position",true))
+$("#longitudeDiv").html(latlonginput.generateLongitudeInputWithLabel(00,"position",true))
+
+
+$("#latitudeDiv2").html(latlonginput.generateLatitudeInput(0,"position2",false))
+$("#longitudeDiv2").html(latlonginput.generateLongitudeInput(00,"position2",false))
+
+
+function alert_to_values(){
+    var first_position = latlonginput.get_position('position');
+    var second_position = latlonginput.get_position('position2');
+
+    window.alert("First:" + first_position.lat + "/" + first_position.long)
+    window.alert("Second:" + second_position.lat + "/" + second_position.long)
+}
+</script>
+
+
+</html>
