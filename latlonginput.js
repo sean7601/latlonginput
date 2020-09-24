@@ -79,6 +79,22 @@ format_three_digit(number){
     else
         return number;
 },
+setLatitudeInput(lat,id){
+    $("[data-id='"+id+"'][name='latInputStart']").val(Math.abs(lat));
+
+    if(lat < 0)
+        $("[data-id='"+id+"'][name='latInputEnd']").html("S")
+    else
+        $("[data-id='"+id+"'][name='latInputEnd']").html("N")
+},
+setLongitudeInput(lon,id){
+    $("[data-id='"+id+"'][name='lonInputStart']").val(Math.abs(lon));
+
+    if(lon < 0)
+        $("[data-id='"+id+"'][name='lonInputEnd']").html("S")
+    else
+        $("[data-id='"+id+"'][name='lonInputEnd']").html("N")
+},
 generateLatitudeInput(lat,id,includeSmall){
     var format_lat = this.get_formatted_latitude(lat)
     var html = '<div class="input-group">'
