@@ -1,15 +1,26 @@
-var latlonginput = {
-generateLatitudeInputWithLabel(value,id,includeSmall){
+var latlonginput = new Object;
+
+latlonginput.generateLatitudeInputWithCustomLabel = function(value,id,label,includeSmall){
+    var html = "<label>"+label+"</label>";
+    html += latlonginput.generateLatitudeInput(value,id,includeSmall)
+    return html
+}
+latlonginput.generateLongitudeInputWithCustomLabel = function(value,id,label,includeSmall){
+    var html = "<label>"+label+"</label>";
+    html += latlonginput.generateLongitudeInput(value,id,includeSmall)
+    return html
+}
+latlonginput.generateLatitudeInputWithLabel = function(value,id,includeSmall){
     var html = "<label>Latitude</label>";
     html += latlonginput.generateLatitudeInput(value,id,includeSmall)
     return html
-},
-generateLongitudeInputWithLabel(value,id,includeSmall){
+}
+latlonginput.generateLongitudeInputWithLabel = function(value,id,includeSmall){
     var html = "<label>Longitude</label>";
     html += latlonginput.generateLongitudeInput(value,id,includeSmall)
     return html
-},
-get_formatted_latitude(lat){
+}
+latlonginput.get_formatted_latitude = function(lat){
     var result = {number:"",side:""}
     result.side = "N";
     if(lat < 0){
@@ -34,11 +45,14 @@ get_formatted_latitude(lat){
     result.min = latlonginput.format_two_digit(result.min)
     result.sec = latlonginput.format_two_digit(result.sec)
 
+    result.display = {deg:""+(result.deg),min:""+(result.min),sec:""+latlonginput.format_two_digit(Math.floor(result.sec))};
+    result.concat = result.display.deg + "-" + result.display.min + "-" + result.display.sec + result.side;
+
     result.number = Math.abs(Math.round(lat*100)/100);   
     return result 
-},
+}
 
-get_formatted_longitude(lon){
+latlonginput.get_formatted_longitude = function(lon){
     var result = {number:"",side:""}
     result.side = "E";
     if(lon < 0){
@@ -61,41 +75,49 @@ get_formatted_longitude(lon){
     result.deg = latlonginput.format_three_digit(result.deg)
     result.min = latlonginput.format_two_digit(result.min)
     result.sec = latlonginput.format_two_digit(result.sec)
+
+    result.display = {deg:""+(result.deg),min:""+(result.min),sec:""+latlonginput.format_two_digit(Math.floor(result.sec))};
+    result.concat = result.display.deg + "-" + result.display.min + "-" + result.display.sec + result.side;
     return result 
-},
-format_two_digit(number){
+}
+latlonginput.format_two_digit = function(number){
     if(number == 0)
         return "00"
     else if(number < 10)
         return "0" + number;
     else
         return number;
-},
-format_three_digit(number){
+}
+latlonginput.format_three_digit = function(number){
     if(number < 10)
         return "00" + number;
     else if(number < 100)
         return "0" + number
     else
         return number;
-},
-setLatitudeInput(lat,id){
-    $("[data-id='"+id+"'][name='latInputStart']").val(Math.abs(lat));
+}
+latlonginput.setLatitudeInput = function(lat,id){
+    lat = latlonginput.get_formatted_latitude(lat);
 
-    if(lat < 0)
-        $("[data-id='"+id+"'][name='latInputEnd']").html("S")
-    else
-        $("[data-id='"+id+"'][name='latInputEnd']").html("N")
-},
-setLongitudeInput(lon,id){
-    $("[data-id='"+id+"'][name='lonInputStart']").val(Math.abs(lon));
+    
 
-    if(lon < 0)
-        $("[data-id='"+id+"'][name='lonInputEnd']").html("S")
-    else
-        $("[data-id='"+id+"'][name='lonInputEnd']").html("N")
-},
-generateLatitudeInput(lat,id,includeSmall){
+    var formatLat = lat.display.deg + " " + lat.display.min + " " + lat.display.sec;
+
+    $("[data-id='"+id+"'][name='latInputStart']").val(formatLat);
+
+    $("[data-id='"+id+"'][name='latInputEnd']").html(lat.side)
+
+}
+latlonginput.setLongitudeInput = function(lon,id){
+    lon = latlonginput.get_formatted_longitude(lon);
+
+    var formatLon = lon.display.deg + " " + lon.display.min + " " + lon.display.sec;
+
+    $("[data-id='"+id+"'][name='lonInputStart']").val(formatLon);
+
+    $("[data-id='"+id+"'][name='lonInputEnd']").html(lon.side)
+}
+latlonginput.generateLatitudeInput = function(lat,id,includeSmall){
     var format_lat = this.get_formatted_latitude(lat)
     var html = '<div class="input-group">'
         html += "<input value='"+format_lat.number+"' data-id='"+id+"' oninput=latlonginput.update_lat_small('"+id+"') name='latInputStart' type='text' class='form-control' aria-label='Text input with dropdown button'>"
@@ -114,9 +136,9 @@ generateLatitudeInput(lat,id,includeSmall){
         html += "<small hidden data-id='"+id+"' name='lat_small'></small>";
     return html;
 
-},
+}
 
-generateLongitudeInput(lon,id,includeSmall){
+latlonginput.generateLongitudeInput = function(lon,id,includeSmall){
     var format_lon = this.get_formatted_longitude(lon)
     var html = '<div class="input-group">'
         html += "<input value='"+format_lon.number+"' data-id='"+id+"' oninput=latlonginput.update_lon_small('"+id+"') name='lonInputStart' type='text' class='form-control' aria-label='Text input with dropdown button'>"
@@ -134,9 +156,9 @@ generateLongitudeInput(lon,id,includeSmall){
         html += "<small hidden data-id='"+id+"' name='lon_small'></small>";
     return html;
 
-},
+}
 
-update_lat_small(id){
+latlonginput.update_lat_small = function(id){
     var lat = latlonginput.getLatitude(id);
     var selector = $("[data-id='"+id+"'][name='lat_small']")
     if((""+lat).includes("Invalid Input")){
@@ -146,8 +168,8 @@ update_lat_small(id){
     var format = (latlonginput.get_formatted_latitude(lat))
     $(selector).html(format.deg + " " + format.min + " " + latlonginput.format_two_digit(Math.round(100*format.sec)/100) + " " + format.side)
 
-},
-update_lon_small(id){
+}
+latlonginput.update_lon_small = function(id){
     var lon = latlonginput.getLongitude(id);
     var selector = $("[data-id='"+id+"'][name='lon_small']")
     if((""+lon).includes("Invalid Input")){
@@ -157,10 +179,10 @@ update_lon_small(id){
     var format = (latlonginput.get_formatted_longitude(lon))
     $(selector).html(format.deg + " " + format.min + " " + latlonginput.format_two_digit(Math.round(100*format.sec)/100) + " " + format.side)
 
-},
-getLatitude(id){
-    var lat = parseFloat($("[data-id='"+id+"'][name='latInputStart']").val().replace(/[^0-9.]/g, ""));
-    var round_lat = Math.floor(lat) + "";
+}
+latlonginput.getLatitude = function(id){
+    var lat = ($("[data-id='"+id+"'][name='latInputStart']").val().replace(/[^0-9.]/g, ""));
+    var round_lat = lat + "";
     var remainder_lat = lat % 1
     var deg = 0;
     var min = 0;
@@ -199,14 +221,16 @@ getLatitude(id){
         lat *= -1;
     return lat;
 
-},
-getLongitude(id){
-    var lon = parseFloat($("[data-id='"+id+"'][name='lonInputStart']").val().replace(/[^0-9.]/g, ""));
-    var round_lon = Math.floor(lon) + "";
+}
+latlonginput.getLongitude = function(id){
+    var lon = ($("[data-id='"+id+"'][name='lonInputStart']").val().replace(/[^0-9.]/g, ""));
+    var round_lon = (lon) + "";
     var remainder_lon = lon % 1
     var deg = 0;
     var min = 0;
     var sec = 0;
+
+    console.log(round_lon)
     if(round_lon.length == 7){
         deg = round_lon.slice(0,3)
         min = round_lon.slice(3,5)
@@ -239,21 +263,20 @@ getLongitude(id){
     if($("[data-id='"+id+"'][name='lonInputEnd']").html() == "W")
         lon *= -1;
     return lon;
-},
-changeLonEnd(end,id){
+}
+latlonginput.changeLonEnd = function(end,id){
     $("[data-id='"+id+"'][name='lonInputEnd']").html(end)
     latlonginput.update_lon_small(id)
-},
-changeLatEnd(end,id){
+}
+latlonginput.changeLatEnd = function(end,id){
     $("[data-id='"+id+"'][name='latInputEnd']").html(end)
     latlonginput.update_lat_small(id)
 
-},
+}
 
-get_position(id){
+latlonginput.get_position = function(id){
     var pos = {lat:"",long:""}
     pos.lat = latlonginput.getLatitude(id);
     pos.long = latlonginput.getLongitude(id);
     return pos
-}
 }
